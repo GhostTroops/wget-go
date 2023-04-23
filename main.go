@@ -89,10 +89,10 @@ func main() {
 	}
 
 	var start, end, partialSize int64
-	if 0 < fileSize%*workerCount {
-		partialSize = int64(fileSize / (*workerCount - 1))
+	if 0 < fileSize%(*workerCount) {
+		partialSize = fileSize / (*workerCount - 1)
 	} else {
-		partialSize = int64(fileSize / *workerCount)
+		partialSize = fileSize / *workerCount
 	}
 	now := time.Now().UTC()
 	for num := int64(0); num < worker.Count; num++ {
