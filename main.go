@@ -36,6 +36,7 @@ type Progress struct {
 var (
 	pipelineHttp = PipelineHttp.NewPipelineHttp()
 	myClient     = pipelineHttp.GetClient4Http2()
+	sCurDir, err = os.Getwd()
 )
 
 func main() {
@@ -62,14 +63,14 @@ func main() {
 
 	var filePath string
 	if *t {
-		filePath = filepath.Dir(os.Args[0]) + string(filepath.Separator) + strconv.FormatInt(time.Now().UnixNano(), 10) + "_" + getFileName(downloadUrl)
+		filePath = sCurDir + string(filepath.Separator) + strconv.FormatInt(time.Now().UnixNano(), 10) + "_" + getFileName(downloadUrl)
 	} else {
 		if "" != out {
-			filePath = filepath.Dir(os.Args[0]) + string(filepath.Separator) + out
+			filePath = sCurDir + string(filepath.Separator) + out
 		} else if "" != szFileName {
-			filePath = filepath.Dir(os.Args[0]) + string(filepath.Separator) + szFileName
+			filePath = sCurDir + string(filepath.Separator) + szFileName
 		} else {
-			filePath = filepath.Dir(os.Args[0]) + string(filepath.Separator) + getFileName(szOldUrl)
+			filePath = sCurDir + string(filepath.Separator) + getFileName(szOldUrl)
 		}
 	}
 	log.Printf("Local path: %s\n", filePath)
