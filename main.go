@@ -111,9 +111,9 @@ func main() {
 			end = fileSize // last part
 		} else {
 			end = start + partialSize
-		}
-		if end > fileSize {
-			end = fileSize
+			if end > fileSize {
+				end = fileSize
+			}
 		}
 
 		worker.SyncWG.Add(1)
@@ -130,13 +130,17 @@ func main() {
 
 func (w *Worker) writeRange(partNum int64, start int64, end int64) {
 	var written int64
+
+	defer w.Bars[partNum].Finish()
+	defer w.SyncWG.Done()
+	if start >= end {
+		return
+	}
 	body, size, err := w.getRangeBody(start, end)
 	if err != nil {
 		log.Fatalf("Part %d request error: %s\n", partNum+1, err.Error())
 	}
 	defer body.Close()
-	defer w.Bars[partNum].Finish()
-	defer w.SyncWG.Done()
 
 	// Assign total size to progress bar
 	w.Bars[partNum].Total = size
@@ -170,7 +174,7 @@ func (w *Worker) writeRange(partNum int64, start int64, end int64) {
 			_, flagged := percentFlag[p]
 			if !flagged {
 				percentFlag[p] = true
-				w.Bars[int(partNum)].Prefix(fmt.Sprintf("Part %d  %d%% ", partNum+1, p))
+				w.Bars[int(partNum)].Prefix(fmt.Sprintf("Part %d(%d - %d)  %d%% ", partNum+1, start, end+1, p))
 			}
 		}
 		if er != nil {
@@ -191,7 +195,7 @@ func (w *Worker) getRangeBody(start int64, end int64) (io.ReadCloser, int64, err
 	//var client http.Client
 	req, err := http.NewRequest("GET", w.Url, nil)
 	// req.Header.Set("cookie", "")
-	// log.Printf("Request header: %s\n", req.Header)
+	//log.Printf("Request header: %s\n", req.Header)
 	if err != nil {
 		return nil, 0, err
 	}
