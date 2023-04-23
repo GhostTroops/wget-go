@@ -143,7 +143,7 @@ func (w *Worker) writeRange(partNum int64, start int64, end int64) {
 	percentFlag := map[int64]bool{}
 
 	// make a buffer to keep chunks that are read
-	buf := make([]byte, 64*1024)
+	buf := make([]byte, 8*1024)
 	for {
 		nr, er := body.Read(buf)
 		if nr > 0 {
@@ -186,7 +186,6 @@ func (w *Worker) writeRange(partNum int64, start int64, end int64) {
 }
 
 func (w *Worker) getRangeBody(start int64, end int64) (io.ReadCloser, int64, error) {
-	var client http.Client
 	req, err := http.NewRequest("GET", w.Url, nil)
 	// req.Header.Set("cookie", "")
 	// log.Printf("Request header: %s\n", req.Header)
@@ -196,7 +195,7 @@ func (w *Worker) getRangeBody(start int64, end int64) (io.ReadCloser, int64, err
 
 	// Set range header
 	req.Header.Add("Range", fmt.Sprintf("bytes=%d-%d", start, end))
-	resp, err := client.Do(req)
+	resp, err := myClient.Do(req)
 	if err != nil {
 		return nil, 0, err
 	}
