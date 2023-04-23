@@ -174,7 +174,8 @@ func (w *Worker) writeRange(partNum int64, start int64, end int64) {
 			_, flagged := percentFlag[p]
 			if !flagged {
 				percentFlag[p] = true
-				w.Bars[int(partNum)].Prefix(fmt.Sprintf("Part %d(%d - %d)  %d%% ", partNum+1, start, end+1, p))
+				//w.Bars[int(partNum)].Prefix(fmt.Sprintf("Part %d(%d - %d)  %d%% ", partNum+1, start, end+1, p))
+				w.Bars[int(partNum)].Prefix(fmt.Sprintf("Part %d %d%% ", partNum+1, p))
 			}
 		}
 		if er != nil {
