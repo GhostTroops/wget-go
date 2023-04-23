@@ -87,10 +87,11 @@ func main() {
 		TotalSize: fileSize,
 	}
 
-	var start, end int64
-	var partialSize = int64(fileSize / *workerCount)
+	var start, end, partialSize int64
 	if 0 < fileSize%*workerCount {
-		partialSize++
+		partialSize = int64(fileSize / (*workerCount - 1))
+	} else {
+		partialSize = int64(fileSize / *workerCount)
 	}
 	now := time.Now().UTC()
 	for num := int64(0); num < worker.Count; num++ {
@@ -107,6 +108,9 @@ func main() {
 			end = fileSize // last part
 		} else {
 			end = start + partialSize
+		}
+		if end > fileSize {
+			end = fileSize
 		}
 
 		worker.SyncWG.Add(1)
