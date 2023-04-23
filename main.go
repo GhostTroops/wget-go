@@ -10,6 +10,7 @@ import (
 	"net/url"
 	"os"
 	"path/filepath"
+	"runtime"
 	"strconv"
 	"strings"
 	"sync"
@@ -35,11 +36,12 @@ type Progress struct {
 
 var (
 	pipelineHttp = PipelineHttp.NewPipelineHttp()
-	myClient     = pipelineHttp.GetClient4Http2()
 	sCurDir, err = os.Getwd()
 )
 
 func main() {
+	runtime.GOMAXPROCS(runtime.NumCPU())
+	pipelineHttp.SetNoLimit()
 	//os.Args = []string{"", "-u", "https://huggingface.co/TencentARC/T2I-Adapter/resolve/main/models/t2iadapter_style_sd14v1.pth"}
 	var t = flag.Bool("t", false, "file name with datetime")
 
@@ -186,6 +188,7 @@ func (w *Worker) writeRange(partNum int64, start int64, end int64) {
 }
 
 func (w *Worker) getRangeBody(start int64, end int64) (io.ReadCloser, int64, error) {
+	//var client http.Client
 	req, err := http.NewRequest("GET", w.Url, nil)
 	// req.Header.Set("cookie", "")
 	// log.Printf("Request header: %s\n", req.Header)
@@ -195,7 +198,7 @@ func (w *Worker) getRangeBody(start int64, end int64) (io.ReadCloser, int64, err
 
 	// Set range header
 	req.Header.Add("Range", fmt.Sprintf("bytes=%d-%d", start, end))
-	resp, err := myClient.Do(req)
+	resp, err := pipelineHttp.GetRawClient4Http2().Do(req) // myClient
 	if err != nil {
 		return nil, 0, err
 	}
@@ -219,14 +222,13 @@ func getHds(header http.Header, a ...string) string {
 2. Confirm the size of downloaded resources
 */
 func getSizeAndCheckRangeSupport(szUrl1 string) (szFileName, szUrl string, size int64, err error) {
-	pipelineHttp.SetNoLimit()
 	req, err := http.NewRequest("HEAD", szUrl1, nil)
 	if err != nil {
 		return
 	}
 	// req.Header.Set("cookie", "")
 	// log.Printf("Request header: %s\n", req.Header)
-	res, err := myClient.Do(req)
+	res, err := pipelineHttp.GetRawClient4Http2().Do(req)
 	if err != nil {
 		return
 	}
