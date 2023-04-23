@@ -3,11 +3,14 @@ module github.com/hktalent/wget-go
 go 1.19
 
 require (
-	github.com/cheggaaa/pb v1.0.29 // indirect
+	github.com/cheggaaa/pb v1.0.29
+	github.com/hktalent/PipelineHttp v0.0.0-20230404011556-11bdccf551c8
+)
+
+require (
 	github.com/go-task/slim-sprig v0.0.0-20230315185526-52ccab3ef572 // indirect
 	github.com/golang/mock v1.6.0 // indirect
 	github.com/google/pprof v0.0.0-20230323073829-e72429f035bd // indirect
-	github.com/hktalent/PipelineHttp v0.0.0-20230404011556-11bdccf551c8 // indirect
 	github.com/lucas-clemente/quic-go v0.31.1 // indirect
 	github.com/marten-seemann/qpack v0.3.0 // indirect
 	github.com/marten-seemann/qtls-go1-18 v0.1.4 // indirect
