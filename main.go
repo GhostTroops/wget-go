@@ -95,7 +95,7 @@ func main() {
 	now := time.Now().UTC()
 	for num := int64(0); num < worker.Count; num++ {
 		// New sub progress bar (give it 0 at first for new instance and assign real size later on.)
-		bar := pb.New(0).Prefix(fmt.Sprintf("Part %d  0%% ", num))
+		bar := pb.New(0).Prefix(fmt.Sprintf("Part %d  0%% ", num+1))
 		bar.ShowSpeed = true
 		bar.SetMaxWidth(100)
 		bar.SetUnits(pb.U_BYTES_DEC)
@@ -125,7 +125,7 @@ func (w *Worker) writeRange(partNum int64, start int64, end int64) {
 	var written int64
 	body, size, err := w.getRangeBody(start, end)
 	if err != nil {
-		log.Fatalf("Part %d request error: %s\n", partNum, err.Error())
+		log.Fatalf("Part %d request error: %s\n", partNum+1, err.Error())
 	}
 	defer body.Close()
 	defer w.Bars[partNum].Finish()
@@ -138,16 +138,16 @@ func (w *Worker) writeRange(partNum int64, start int64, end int64) {
 	percentFlag := map[int64]bool{}
 
 	// make a buffer to keep chunks that are read
-	buf := make([]byte, 8*1024)
+	buf := make([]byte, 64*1024)
 	for {
 		nr, er := body.Read(buf)
 		if nr > 0 {
 			nw, err := w.File.WriteAt(buf[0:nr], start)
 			if err != nil {
-				log.Fatalf("Part %d occured error: %s.\n", partNum, err.Error())
+				log.Fatalf("Part %d occured error: %s.\n", partNum+1, err.Error())
 			}
 			if nr != nw {
-				log.Fatalf("Part %d occured error of short writiing.\n", partNum)
+				log.Fatalf("Part %d occured error of short writiing.\n", partNum+1)
 			}
 
 			start = int64(nw) + start
@@ -163,7 +163,7 @@ func (w *Worker) writeRange(partNum int64, start int64, end int64) {
 			_, flagged := percentFlag[p]
 			if !flagged {
 				percentFlag[p] = true
-				w.Bars[int(partNum)].Prefix(fmt.Sprintf("Part %d  %d%% ", partNum, p))
+				w.Bars[int(partNum)].Prefix(fmt.Sprintf("Part %d  %d%% ", partNum+1, p))
 			}
 		}
 		if er != nil {
@@ -171,11 +171,11 @@ func (w *Worker) writeRange(partNum int64, start int64, end int64) {
 				if size == written {
 					// Download successfully
 				} else {
-					handleError(errors.New(fmt.Sprintf("Part %d unfinished.\n", partNum)))
+					handleError(errors.New(fmt.Sprintf("Part %d unfinished.\n", partNum+1)))
 				}
 				break
 			}
-			handleError(errors.New(fmt.Sprintf("Part %d occured error: %s\n", partNum, er.Error())))
+			handleError(errors.New(fmt.Sprintf("Part %d occured error: %s\n", partNum+1, er.Error())))
 		}
 	}
 }
