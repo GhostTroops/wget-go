@@ -10,7 +10,7 @@ wget,golang
 
 # How Run 
 ```
-go build -o ~/go/bin/wget main.g
+go build -o ~/go/bin/wget main.go
 
 ~/go/bin/wget -u 'https://huggingface.co/Salesforce/codegen-16B-mono/resolve/main/pytorch_model.bin'
 
