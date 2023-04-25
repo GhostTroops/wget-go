@@ -7,6 +7,7 @@ wget,golang
 - support Multi-threading
 - Automatically track page (location) jumps
 - Automatically track attachment file names and correct file names
+- support: cat list.txt|~/go/bin/wget
 
 # How Run 
 ```
@@ -15,8 +16,11 @@ go build -o ~/go/bin/wget main.go
 ~/go/bin/wget -u 'https://huggingface.co/Salesforce/codegen-16B-mono/resolve/main/pytorch_model.bin'
 
 ~/go/bin/wget -u "https://huggingface.co/TencentARC/T2I-Adapter/resolve/main/models/t2iadapter_style_sd14v1.pth"
+
+
 shasum -a 256 t2iadapter_style_sd14v1.pth
 
+cat list.txt|~/go/bin/wget
 ```
 
 <img width="800" src="https://user-images.githubusercontent.com/18223385/233818824-305fea4a-a5ed-4a70-8ade-33d6a8c3c734.gif">

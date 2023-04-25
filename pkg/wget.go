@@ -9,7 +9,6 @@ import (
 	"net/url"
 	"os"
 	"path/filepath"
-	"runtime"
 	"strconv"
 	"strings"
 	"sync"
@@ -34,14 +33,11 @@ type Progress struct {
 }
 
 var (
-	pipelineHttp = PipelineHttp.NewPipelineHttp()
-	sCurDir, err = os.Getwd()
+	PipelineHttp1 = PipelineHttp.NewPipelineHttp()
+	sCurDir, err  = os.Getwd()
 )
 
-func Main(t *bool, downloadUrl, out string, workerCount *int64) {
-	runtime.GOMAXPROCS(runtime.NumCPU())
-	pipelineHttp.SetNoLimit()
-
+func Main(t *bool, downloadUrl, out string, workerCount *int64, wg *sync.WaitGroup) {
 	// Get header from the url
 	log.Println("Url:", downloadUrl)
 	szOldUrl := downloadUrl
@@ -79,6 +75,9 @@ func Main(t *bool, downloadUrl, out string, workerCount *int64) {
 		File:      f,
 		Count:     *workerCount,
 		TotalSize: fileSize,
+	}
+	if nil != wg {
+		worker.SyncWG = *wg
 	}
 
 	var start, end, partialSize int64
@@ -194,7 +193,7 @@ func (w *Worker) getRangeBody(start int64, end int64) (io.ReadCloser, int64, err
 
 	// Set range header
 	req.Header.Add("Range", fmt.Sprintf("bytes=%d-%d", start, end))
-	resp, err := pipelineHttp.GetRawClient4Http2().Do(req) // myClient
+	resp, err := PipelineHttp1.GetRawClient4Http2().Do(req) // myClient
 	if err != nil {
 		return nil, 0, err
 	}
@@ -224,7 +223,7 @@ func getSizeAndCheckRangeSupport(szUrl1 string) (szFileName, szUrl string, size 
 	}
 	// req.Header.Set("cookie", "")
 	// log.Printf("Request header: %s\n", req.Header)
-	res, err := pipelineHttp.GetRawClient4Http2().Do(req)
+	res, err := PipelineHttp1.GetRawClient4Http2().Do(req)
 	if err != nil {
 		return
 	}
