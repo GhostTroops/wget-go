@@ -1,6 +1,6 @@
 module github.com/hktalent/wget-go
 
-go 1.21.4
+go 1.19
 
 require (
 	github.com/cheggaaa/pb v1.0.29
