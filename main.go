@@ -1,12 +1,16 @@
 package main
 
 import (
+	_ "embed"
 	"flag"
 	util "github.com/hktalent/go-utils"
 	"github.com/hktalent/wget-go/pkg"
 	"runtime"
 	"sync"
 )
+
+//go:embed config/*
+var config embed.FS
 
 func main() {
 	util.DoInitAll()
