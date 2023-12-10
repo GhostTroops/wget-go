@@ -1,7 +1,7 @@
 package main
 
 import (
-	_ "embed"
+	"embed"
 	"flag"
 	util "github.com/hktalent/go-utils"
 	"github.com/hktalent/wget-go/pkg"
@@ -13,7 +13,7 @@ import (
 var config embed.FS
 
 func main() {
-	util.DoInitAll()
+	util.DoInit(&config)
 	runtime.GOMAXPROCS(runtime.NumCPU())
 	pkg.PipelineHttp1.SetNoLimit()
 
