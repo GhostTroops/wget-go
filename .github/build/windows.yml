@@ -20,7 +20,8 @@ builds:
       - amd64
 
 archives:
-- format: zip
+  - format: zip
+    compression: xz
 
 checksum:
   name_template: "{{ .ProjectName }}-windows-checksums.txt"

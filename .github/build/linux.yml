@@ -20,7 +20,8 @@ builds:
 #        - upx --brute dist/51pwnPlatform-linux_linux_amd64_*/51pwnPlatform
 #        - ./.github/upx.sh
 archives:
-- format: zip
+  - format: zip
+    compression: xz
 
 checksum:
   name_template: "{{ .ProjectName }}-linux-checksums.txt"
